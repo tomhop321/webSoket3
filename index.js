@@ -1,17 +1,22 @@
-const http = require('http');
-const { Server } = require("socket.io");
+var app = require('express')();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
-
-
-
-
-const httpServer = createServer();
-const io = new Server(httpServer, {
-  // options
+app.get('/', function(req, res){
+   res.sendFile('E:/test/index.html');
 });
-
-io.on("connection", (socket) => {
-  // ...
+   
+io.on('connection', function(socket){
+   console.log('A user connected');
+   // Send a message when
+   setTimeout(function(){
+      // Sending an object when emmiting an event
+      socket.emit('testerEvent', { description: 'A custom event named testerEvent!'});
+   }, 4000);
+   socket.on('disconnect', function () {
+      console.log('A user disconnected');
+   });
 });
-
-httpServer.listen(3000);
+http.listen(3000, function(){
+   console.log('listening on localhost:3000');
+});
